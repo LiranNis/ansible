@@ -1,0 +1,6 @@
+---
+- name: Multiple raw test
+  hosts: windows2012
+  tasks:
+    - name: Run the single ps
+      script: single_ps.ps1

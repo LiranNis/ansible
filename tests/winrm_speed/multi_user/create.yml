@@ -1,0 +1,28 @@
+---
+- name: Create multiple users
+  hosts: windows2012
+  tasks:
+    - name: user1
+      win_user:
+        name="user1"
+        password="Pass1234"
+    - name: do nothing
+      raw: "hostname"
+    - name: user2
+      win_user:
+        name="user2"
+        password="Pass1234"
+    - name: user3
+      win_user:
+        name="user3"
+        password="Pass1234"
+    - name: user4
+      win_user:
+        name="user4"
+        password="Pass1234"
+    - name: user5
+      win_user:
+        name="user5"
+        password="Pass1234"
+
+

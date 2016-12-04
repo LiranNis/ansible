@@ -1,0 +1,25 @@
+---
+- name: Multiple raw test
+  hosts: windows2012
+  tasks:
+    - name: First
+      raw: hostname
+    - name: Second
+      raw: hostname
+    - name: Third
+      raw: hostname
+    - name: Forth
+      raw: hostname
+    - name: Fifth
+      raw: hostname
+    - name: Sixth
+      raw: hostname
+    - name: Seventh
+      raw: hostname
+    - name: Eighth
+      raw: hostname
+    - name: Ninth
+      raw: hostname
+    - name: Tenth
+      raw: hostname
+

@@ -1,0 +1,9 @@
+---
+# Need to build module
+- name: Test domain user with win_user
+  hosts: windows2012
+  tasks:
+    - name: add domain user
+      win_user:
+        name=TEST.COM\Liran
+        groups=["Administrators"] 
