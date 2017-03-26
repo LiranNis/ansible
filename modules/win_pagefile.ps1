@@ -34,15 +34,15 @@ $result = @{
     changed = $false
 }
 
-$automatic = $false # Done
-$drive = "C" # Add different variations
-$initialSize = 0 # Done
-$maximumSize = 0 # Done
-$override = $true
-$fullPath = $drive + ":\pagefile.sys"
-$removeAll = $false # Done
-$state = "present" # Done
-$systemManaged = $false # Done
+#$automatic = $false # Done
+#$drive = "C" # Add different variations
+#$initialSize = 0 # Done
+#$maximumSize = 0 # Done
+#$override = $true
+#$fullPath = $drive + ":\pagefile.sys"
+#$removeAll = $false # Done
+#$state = "present" # Done
+#$systemManaged = $false # Done
 
 $automatic = Get-AnsibleParam -obj $params -name "automatic" -type "bool"
 $drive = Get-AnsibleParam -obj $params -name "drive" -type "str"
@@ -81,11 +81,10 @@ if ($state -eq "absent") {
     } else {
         Set-WmiInstance -Class Win32_PageFileSetting -Arguments @{name = $fullPath; InitialSize = $initialSize; MaximumSize = $maximumSize}
     }
+    $result.changed = true
 
 } elseif ($state -eq "query") {
-    #Set-Attr $result "pagefiles" Get-WmiObject Win32_PageFileSetting
-    $result.pagefiles = (Get-WmiObject Win32_PageFileSetting | ConvertTo-Json -Compress -Depth 99)
+    $result.pagefiles = Get-WmiObject Win32_PageFileSetting
     $result.automatic_managed_pagefiles = (Get-WmiObject -Class win32_computersystem).AutomaticManagedPagefile
-    $result.removeAll = $removeAll
 }
 Exit-Json $result

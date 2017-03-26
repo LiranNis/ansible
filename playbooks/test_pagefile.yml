@@ -1,0 +1,7 @@
+---
+- name: Create multiple users
+  hosts: windows2012
+  tasks:
+    - win_pagefile:
+        drive=c
+    - win_pagefile:
