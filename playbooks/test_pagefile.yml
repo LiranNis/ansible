@@ -3,5 +3,8 @@
   hosts: windows2012
   tasks:
     - win_pagefile:
-        drive=c
+        drive=C
+        initial_size=1024
+        maximum_size=1024
+        state=present
     - win_pagefile:
