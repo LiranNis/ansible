@@ -20,50 +20,54 @@
 # POWERSHELL_COMMON
 
 ########
-$Automatic = false # Done
-$Drive = "C" # Add different variations
-$InitialSize = 0
-$MaximumSize = 0 
-$Path = $Drive + ":\pagefile.sys" # Done
-$RemoveAll = false # Done
-$State = "present" # Done
-$SystemManaged = false
 
-if ($RemoveAll)
+function Remove-Pagefile($path) {
+    Get-WmiObject Win32_PageFileSetting | WHERE Name -eq $path | Remove-WmiObject
+}
+
+########
+
+$automatic = $false # Done
+$drive = "C" # Add different variations
+$initialSize = 0 # Done
+$maximumSize = 0 # Done
+$override = $true
+$path = "pagefile.sys"
+$fullPath = $drive + ":\" + $path
+$removeAll = $false # Done
+$state = "present" # Done
+$systemManaged = $false # Done
+
+if ($removeAll)
 {
     New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management\" -Name PagingFiles -Value "" -PropertyType MultiString -Force
     Get-WmiObject Win32_PageFileSetting | Remove-WmiObject
 }
 
-if ($Automatic)
-{
-    wmic computersystem set AutomaticManagedPageFile=TRUE
-}
-else
-{
-    wmic computersystem set AutomaticManagedPageFile=FALSE
+$computerSystem = Get-WmiObject -Class win32_computersystem -EnableAllPrivileges
 
-    if ($State -eq "absent")
-    {
-        Get-WmiObject Win32_PageFileSetting | WHERE Name -eq $Path | Remove-WmiObject
-    }
-
-    if ($State -eq "present")
-    {
-        if ($SystemManaged)
-        {
-
-        }
-        else
-        {
-            Set-WmiInstance -Class Win32_PageFileSetting -Arguments @{name=$Path; InitialSize = $InitialSize; MaximumSize = $MaximumSize}
-        }
-    }
-
-    # Windows Server 2012
-
-
-    # Windows Server 2008
-#    Set-WmiInstance -Class Win32_PageFileSetting -Arguments @{name="C:\pagefile.sys"; InitialSize = 20; MaximumSize = 20 }
+if ($computerSystem.AutomaticManagedPagefile -ne $automatic) {
+    $computerSystem.AutomaticManagedPagefile = $automatic
+    $computerSystem.Put()
 }
 
+if ($state -eq "absent")
+{
+    Remove-Pagefile $fullPath
+}
+elseif ($state -eq "present")
+{
+    if ($override)
+    {
+        Get-WmiObject Win32_PageFileSetting | WHERE Name -eq $fullPath | Remove-WmiObject
+    }
+
+    if ($systemManaged)
+    {
+        Set-WmiInstance -Class Win32_PageFileSetting -Arguments @{name = $fullPath; InitialSize = 0; MaximumSize = 0}
+    }
+    else
+    {
+        Set-WmiInstance -Class Win32_PageFileSetting -Arguments @{name = $fullPath; InitialSize = $initialSize; MaximumSize = $maximumSize}
+    }
+}
