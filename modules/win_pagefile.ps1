@@ -82,7 +82,7 @@ if ($state -eq "absent") {
         } else {
             Set-WmiInstance -Class Win32_PageFileSetting -Arguments @{name = $fullPath; InitialSize = $initialSize; MaximumSize = $maximumSize}
         }
-        $result.changed = true
+        $result.changed = $true
     }
 
 } elseif ($state -eq "query") {
