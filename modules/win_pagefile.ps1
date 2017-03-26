@@ -22,7 +22,7 @@
 ########
 
 function Remove-Pagefile($path) {
-    Get-WmiObject Win32_PageFileSetting | WHERE Name -eq $path | Remove-WmiObject
+    Get-WmiObject Win32_PageFileSetting | WHERE { $_.Name -eq $path } | Remove-WmiObject
 }
 
 ########
