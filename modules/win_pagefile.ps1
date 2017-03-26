@@ -76,12 +76,14 @@ if ($state -eq "absent") {
         Remove-Pagefile $fullPath
     }
 
-    if ($systemManaged) {
-        Set-WmiInstance -Class Win32_PageFileSetting -Arguments @{name = $fullPath; InitialSize = 0; MaximumSize = 0}
-    } else {
-        Set-WmiInstance -Class Win32_PageFileSetting -Arguments @{name = $fullPath; InitialSize = $initialSize; MaximumSize = $maximumSize}
+    if ((Get-WmiObject Win32_PageFileSetting | WHERE { $_.Name -eq $path }) -eq $null) {
+        if ($systemManaged) {
+            Set-WmiInstance -Class Win32_PageFileSetting -Arguments @{name = $fullPath; InitialSize = 0; MaximumSize = 0}
+        } else {
+            Set-WmiInstance -Class Win32_PageFileSetting -Arguments @{name = $fullPath; InitialSize = $initialSize; MaximumSize = $maximumSize}
+        }
+        $result.changed = true
     }
-    $result.changed = true
 
 } elseif ($state -eq "query") {
     $result.pagefiles = Get-WmiObject Win32_PageFileSetting
