@@ -86,5 +86,6 @@ if ($state -eq "absent") {
     #Set-Attr $result "pagefiles" Get-WmiObject Win32_PageFileSetting
     $result.pagefiles = (Get-WmiObject Win32_PageFileSetting | ConvertTo-Json -Compress -Depth 99)
     $result.automatic_managed_pagefiles = (Get-WmiObject -Class win32_computersystem).AutomaticManagedPagefile
+    $result.removeAll = $removeAll
 }
 Exit-Json $result
