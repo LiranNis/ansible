@@ -88,5 +88,7 @@ if ($state -eq "absent") {
 } elseif ($state -eq "query") {
     $result.pagefiles = Get-WmiObject Win32_PageFileSetting
     $result.automatic_managed_pagefiles = (Get-WmiObject -Class win32_computersystem).AutomaticManagedPagefile
+    $result.initialSize = $initialSize
+    $result.maximumSize = $maximumSize
 }
 Exit-Json $result
