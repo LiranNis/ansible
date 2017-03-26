@@ -59,7 +59,7 @@ elseif ($state -eq "present")
 {
     if ($override)
     {
-        Get-WmiObject Win32_PageFileSetting | WHERE Name -eq $fullPath | Remove-WmiObject
+        Remove-Pagefile $fullPath
     }
 
     if ($systemManaged)
