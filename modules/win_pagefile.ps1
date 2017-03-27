@@ -78,7 +78,7 @@ if ($automatic -ne $null) {
 
 if ($state -eq "absent") {
     # Remove pagefile
-    if (Get-WmiObject Win32_PageFileSetting | WHERE { $_.Name -eq $fullPath } -ne $null)
+    if ((Get-WmiObject Win32_PageFileSetting | WHERE { $_.Name -eq $fullPath }) -ne $null)
     {
         try {
             Remove-Pagefile $fullPath
@@ -91,7 +91,7 @@ if ($state -eq "absent") {
     
     # Remove current pagefile
     if ($override) {
-        if (Get-WmiObject Win32_PageFileSetting | WHERE { $_.Name -eq $fullPath } -ne $null)
+        if ((Get-WmiObject Win32_PageFileSetting | WHERE { $_.Name -eq $fullPath }) -ne $null)
         {
             try {
                 Remove-Pagefile $fullPath
