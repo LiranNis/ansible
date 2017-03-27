@@ -26,6 +26,11 @@ Function Remove-Pagefile($path)
     Get-WmiObject Win32_PageFileSetting | WHERE { $_.Name -eq $path } | Remove-WmiObject
 }
 
+Function Get-Pagefile($path)
+{
+    Get-WmiObject Win32_PageFileSetting | WHERE { $_.Name -eq $path }
+}
+
 ########
 
 $params = Parse-Args $args;
@@ -49,7 +54,7 @@ $drive = Get-AnsibleParam -obj $params -name "drive" -type "str"
 $fullPath = $drive + ":\pagefile.sys"
 $initialSize = Get-AnsibleParam -obj $params -name "initial_size" -type "int"
 $maximumSize = Get-AnsibleParam -obj $params -name "maximum_size" -type "int"
-$override =  Get-AnsibleParam -obj $params -name "override" -type "bool" -default $true
+$override =  Get-AnsibleParam -obj $params -name "override" -type "bool" -default $true # default value?
 $removeAll = Get-AnsibleParam -obj $params -name "remove_all" -type "bool" -default $false
 $state = Get-AnsibleParam -obj $params -name "state" -type "str" -default "query" -validateset "present","absent","query"
 $systemManaged = Get-AnsibleParam -obj $params -name "system_managed" -type "bool" -default $false
@@ -78,7 +83,7 @@ if ($automatic -ne $null) {
 
 if ($state -eq "absent") {
     # Remove pagefile
-    if ((Get-WmiObject Win32_PageFileSetting | WHERE { $_.Name -eq $fullPath }) -ne $null)
+    if ((Get-Pagefile $fullPath) -ne $null)
     {
         try {
             Remove-Pagefile $fullPath
@@ -91,7 +96,7 @@ if ($state -eq "absent") {
     
     # Remove current pagefile
     if ($override) {
-        if ((Get-WmiObject Win32_PageFileSetting | WHERE { $_.Name -eq $fullPath }) -ne $null)
+        if ((Get-Pagefile $fullPath) -ne $null)
         {
             try {
                 Remove-Pagefile $fullPath
@@ -104,12 +109,14 @@ if ($state -eq "absent") {
 
     # Set pagefile
     try {
-        if ($systemManaged) {
-            Set-WmiInstance -Class Win32_PageFileSetting -Arguments @{name = $fullPath; InitialSize = 0; MaximumSize = 0}
-        } else {
-            Set-WmiInstance -Class Win32_PageFileSetting -Arguments @{name = $fullPath; InitialSize = $initialSize; MaximumSize = $maximumSize}
+        if ((Get-Pagefile $fullPath) -eq $null) {
+            if ($systemManaged) {
+                Set-WmiInstance -Class Win32_PageFileSetting -Arguments @{name = $fullPath; InitialSize = 0; MaximumSize = 0}
+            } else {
+                Set-WmiInstance -Class Win32_PageFileSetting -Arguments @{name = $fullPath; InitialSize = $initialSize; MaximumSize = $maximumSize}
+            }
+            $result.changed = $true
         }
-        $result.changed = $true
     } catch {
         Fail-Json $result "Failed to set pagefile $_.Exception.Message"
     }
