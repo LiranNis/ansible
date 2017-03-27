@@ -113,7 +113,23 @@ if ($state -eq "absent") {
     }
 } elseif ($state -eq "query") {
     try {
-        $result.pagefiles = (Get-WmiObject Win32_PageFileSetting | ConvertTo-Json -Compress -Depth 1)
+
+        $result.pagefiles = @()
+        $pagefiles = Get-WmiObject Win32_PageFileSetting
+        foreach ($currentPagefile in $pagefiles) {
+            
+            $currentPagefileObject = @{
+                name = $currentPagefile.Name
+                initial_size = $currentPagefile.InitialSize
+                maximum_size = $currentPagefile.MaximumSize
+                caption = $currentPagefile.Caption
+                description = $currentPagefile.Description
+            }
+
+            $result.pagefiles += $currentPagefileObject
+        }
+        #$result.pagefiles = ( | ConvertTo-Json -Compress -Depth 1)
+
         $result.automatic_managed_pagefiles = (Get-WmiObject -Class win32_computersystem).AutomaticManagedPagefile
     } catch {
         Fail-Json $result "Failed to query current pagefiles $_.Exception.Message"
