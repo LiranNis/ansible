@@ -55,38 +55,68 @@ $state = Get-AnsibleParam -obj $params -name "state" -type "str" -default "query
 $systemManaged = Get-AnsibleParam -obj $params -name "system_managed" -type "bool" -default $false
 
 if ($removeAll) {
-    New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management\" -Name PagingFiles -Value "" -PropertyType MultiString -Force
+    #New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management\" -Name PagingFiles -Value "" -PropertyType MultiString -Force
     Get-WmiObject Win32_PageFileSetting | Remove-WmiObject
 }
 
 if ($automatic -ne $null) {
-    $computerSystem = Get-WmiObject -Class win32_computersystem -EnableAllPrivileges
+    # change autmoatic managed pagefile 
+    try {
+        $computerSystem = Get-WmiObject -Class win32_computersystem -EnableAllPrivileges
     
-    if ($computerSystem.AutomaticManagedPagefile -ne $automatic) {
-        $computerSystem.AutomaticManagedPagefile = $automatic
-        $computerSystem.Put()
+        if ($computerSystem.AutomaticManagedPagefile -ne $automatic) {
+            $computerSystem.AutomaticManagedPagefile = $automatic
+            $computerSystem.Put()
+            $result.changed = $true
+        }
+    } catch {
+        Fail-Json $result "Failed to set AutomaticManagedPagefile $_.Exception.Message"
     }
 }
 
 if ($state -eq "absent") {
-    Remove-Pagefile $fullPath
+    # Remove pagefile
+    if (Get-WmiObject Win32_PageFileSetting | WHERE { $_.Name -eq $fullPath } -ne $null)
+    {
+        try {
+            Remove-Pagefile $fullPath
+            $result.changed = $true
+        } catch {
+            Fail-Json $result "Failed to remove pagefile $_.Exception.Message"
+        }
+    }
 } elseif ($state -eq "present") {
-
+    
+    # Remove current pagefile
     if ($override) {
-        Remove-Pagefile $fullPath
+        if (Get-WmiObject Win32_PageFileSetting | WHERE { $_.Name -eq $fullPath } -ne $null)
+        {
+            try {
+                Remove-Pagefile $fullPath
+                $result.changed = $true
+            } catch {
+                Fail-Json $result "Failed to remove current pagefile $_.Exception.Message"
+            }
+        }
     }
 
-    if ((Get-WmiObject Win32_PageFileSetting | WHERE { $_.Name -eq $path }) -eq $null) {
+    # Set pagefile
+    try {
         if ($systemManaged) {
             Set-WmiInstance -Class Win32_PageFileSetting -Arguments @{name = $fullPath; InitialSize = 0; MaximumSize = 0}
         } else {
             Set-WmiInstance -Class Win32_PageFileSetting -Arguments @{name = $fullPath; InitialSize = $initialSize; MaximumSize = $maximumSize}
         }
         $result.changed = $true
+    } catch {
+        Fail-Json $result "Failed to set pagefile $_.Exception.Message"
     }
-
 } elseif ($state -eq "query") {
-    $result.pagefiles = Get-WmiObject Win32_PageFileSetting
-    $result.automatic_managed_pagefiles = (Get-WmiObject -Class win32_computersystem).AutomaticManagedPagefile
+    try {
+        $result.pagefiles = Get-WmiObject Win32_PageFileSetting
+        $result.automatic_managed_pagefiles = (Get-WmiObject -Class win32_computersystem).AutomaticManagedPagefile
+    } catch {
+        Fail-Json $result "Failed to query current pagefiles $_.Exception.Message"
+    }
 }
 Exit-Json $result
