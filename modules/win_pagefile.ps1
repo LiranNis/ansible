@@ -54,6 +54,8 @@ $removeAll = Get-AnsibleParam -obj $params -name "remove_all" -type "bool" -defa
 $state = Get-AnsibleParam -obj $params -name "state" -type "str" -default "query" -validateset "present","absent","query"
 $systemManaged = Get-AnsibleParam -obj $params -name "system_managed" -type "bool" -default $false
 
+$ErrorActionPreference = "Stop"
+
 if ($removeAll) {
     #New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management\" -Name PagingFiles -Value "" -PropertyType MultiString -Force
     Get-WmiObject Win32_PageFileSetting | Remove-WmiObject
