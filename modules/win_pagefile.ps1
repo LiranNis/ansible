@@ -73,7 +73,7 @@ if ($automatic -ne $null) {
     
         if ($computerSystem.AutomaticManagedPagefile -ne $automatic) {
             $computerSystem.AutomaticManagedPagefile = $automatic
-            $computerSystem.Put()
+            $computerSystem.Put() | Out-Null
             $result.changed = $true
         }
     } catch {
