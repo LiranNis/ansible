@@ -63,7 +63,7 @@ $ErrorActionPreference = "Stop"
 
 if ($removeAll) {
     #New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management\" -Name PagingFiles -Value "" -PropertyType MultiString -Force
-    Get-WmiObject Win32_PageFileSetting | Remove-WmiObject
+    Get-WmiObject Win32_PageFileSetting | Remove-WmiObject | Out-Null
 }
 
 if ($automatic -ne $null) {
