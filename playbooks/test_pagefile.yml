@@ -2,12 +2,18 @@
 - name: Create multiple users
   hosts: windows
   tasks:
+    - debug:
+        msg="expected result - current pagefile"
+    - win_pagefile:
+
     # Set C Pagefile, dont override
     - win_pagefile:
         drive=C
         initial_size=1024
         maximum_size=1024
         state=present
+    - debug:
+        msg="expected result - unchanged or new pagefile"
     - win_pagefile:
 
     # Set C Pagefile, override
@@ -17,18 +23,25 @@
         maximum_size=1024
         override=true
         state=present
+    - debug:
+        msg="expected result - 1024-1024 c drive"
     - win_pagefile:
 
     # Remove C Pagefile
     - win_pagefile:
         drive=c
         state=absent
+    - debug:
+        msg="expected result - no c pagefile"
     - win_pagefile:
 
     # Remove all current pagefiles and disable automatic managed pagefile
     - win_pagefile:
         remove_all=true
         automatic=false
+    - debug:
+        msg="expected result - no pagefiles, not automatic"
+    - win_pagefile:
 
     # Remove all current pagefiles, disable automatic pagefile and set C pagefile
     - win_pagefile:
@@ -46,4 +59,14 @@
         maximum_size=1024
         state=present
 
+    - debug:
+        msg="expected result - 2048-2048 c drive, 1024-1024 d drive"
     - win_pagefile:
+
+    # Set E Pagefile - fail (no such drive)
+    - win_pagefile:
+        drive=e
+        initial_size=1024
+        maximum_size=1024
+        override=true
+        state=present
