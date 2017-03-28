@@ -124,7 +124,13 @@ if ($state -eq "absent") {
     try {
 
         $result.pagefiles = @()
-        $pagefiles = Get-WmiObject Win32_PageFileSetting
+
+        if ($drive -eq $null) {
+            $pagefiles = Get-WmiObject Win32_PageFileSetting
+        } else {
+            $pagefiles = Get-Pagefile $fullPath    
+        }
+
         foreach ($currentPagefile in $pagefiles) {
             
             $currentPagefileObject = @{
@@ -137,7 +143,6 @@ if ($state -eq "absent") {
 
             $result.pagefiles += $currentPagefileObject
         }
-        #$result.pagefiles = ( | ConvertTo-Json -Compress -Depth 1)
 
         $result.automatic_managed_pagefiles = (Get-WmiObject -Class win32_computersystem).AutomaticManagedPagefile
     } catch {
