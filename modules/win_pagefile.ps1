@@ -110,10 +110,11 @@ if ($state -eq "absent") {
     # Set pagefile
     try {
         if ((Get-Pagefile $fullPath) -eq $null) {
-            if ($systemManaged) {
-                Set-WmiInstance -Class Win32_PageFileSetting -Arguments @{name = $fullPath; InitialSize = 0; MaximumSize = 0}
-            } else {
-                Set-WmiInstance -Class Win32_PageFileSetting -Arguments @{name = $fullPath; InitialSize = $initialSize; MaximumSize = $maximumSize}
+            $pagefile = Set-WmiInstance -Class Win32_PageFileSetting -Arguments @{name = $fullPath; InitialSize = 0; MaximumSize = 0}
+            if (!$systemManaged) {
+                $pagefile.InitialSize = $initialSize
+                $pagefile.MaximumSize = $maximumSize
+                $pagefile.Put() | out-null
             }
             $result.changed = $true
         }
@@ -128,7 +129,7 @@ if ($state -eq "absent") {
         if ($drive -eq $null) {
             $pagefiles = Get-WmiObject Win32_PageFileSetting
         } else {
-            $pagefiles = Get-Pagefile $fullPath    
+            $pagefiles = Get-Pagefile $fullPath
         }
 
         foreach ($currentPagefile in $pagefiles) {
