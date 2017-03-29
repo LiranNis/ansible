@@ -23,6 +23,7 @@
 
 Function Get-Group($group_name) 
 {
+    $adsi = [ADSI]"WinNT://$env:COMPUTERNAME"
     $adsi.Children | where { $_.SchemaClassName -eq 'Group' -and $_.Name -eq $group_name }
 }
 
@@ -42,16 +43,17 @@ $state = Get-AnsibleParam -obj $params -name "state" -type "str" -default "prese
 ## Test vars:
 #$name = "TEST.COM/TestGroup"
 #$domain = "TEST.COM"
-#$groups = "Administrators"
-#$name = "user1"
-
-$adsi = [ADSI]"WinNT://$env:COMPUTERNAME"
+$groups = "Administrators"
+$name = "$env:COMPUTERNAME/user1"
 
 if ($domain) {
     $member = ([ADSI]"WinNT://$domain/$name")
 } else {
-    $name = $name.Replace('\','/')
-    $member = ([ADSI]"WinNT://$name")
+    $member = ([ADSI]"WinNT://$env:COMPUTERNAME/$name")
+}
+
+if ($member -eq $null) {
+    Fail-Json $result "object '$name' not found"
 }
 
 If ($groups -is [System.String]) {
@@ -70,8 +72,8 @@ try
                 #$group_obj = $adsi.Children | where { $_.SchemaClassName -eq 'Group' -and $_.Name -eq $grp }
                 $group_obj = Get-Group $grp
                 if ($group_obj) {
-                    if (($group_obj.Members() | foreach {$_.GetType().InvokeMember("GUID", 'GetProperty', $null, $_, $null)}) -contains $member.Guid) {
-                        $group_obj.Remove($member.Path)
+                    if (($group_obj.Members() | foreach {$_.GetType().InvokeMember("adspath", 'GetProperty', $null, $_, $null)}) -contains $member.adspath) {
+                        $group_obj.Remove($member.adspath)
                         $result.changed = $true
                     }
                 }
@@ -85,8 +87,8 @@ try
                 #$group_obj = $adsi.Children | where { $_.SchemaClassName -eq 'Group' -and $_.Name -eq $grp }
                 $group_obj = Get-Group $grp
                 if ($group_obj) {
-                    if (($group_obj.Members() | foreach {$_.GetType().InvokeMember("GUID", 'GetProperty', $null, $_, $null)}) -notcontains $member.Guid) {
-                        $group_obj.Add($member.Path)
+                    if (($group_obj.Members() | foreach {$_.GetType().InvokeMember("GUID", 'GetProperty', $null, $_, $null)}) -notcontains $member.adspath) {
+                        $group_obj.Add($member.adspath)
                         $result.changed = $true
                     }
                 }
