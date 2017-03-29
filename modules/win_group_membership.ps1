@@ -44,7 +44,7 @@ $state = Get-AnsibleParam -obj $params -name "state" -type "str" -default "prese
 #$name = "TEST.COM/TestGroup"
 #$domain = "TEST.COM"
 #$groups = "Administrators"
-#$name = "user1"
+$name = "user1"
 
 if ($domain) {
     $member = ([ADSI]"WinNT://$domain/$name")
@@ -87,7 +87,7 @@ try
                 #$group_obj = $adsi.Children | where { $_.SchemaClassName -eq 'Group' -and $_.Name -eq $grp }
                 $group_obj = Get-Group $grp
                 if ($group_obj) {
-                    if (($group_obj.Members() | foreach {$_.GetType().InvokeMember("GUID", 'GetProperty', $null, $_, $null)}) -notcontains $member.adspath) {
+                    if (($group_obj.Members() | foreach {$_.GetType().InvokeMember("adspath", 'GetProperty', $null, $_, $null)}) -notcontains $member.adspath) {
                         $group_obj.Add($member.adspath)
                         $result.changed = $true
                     }
