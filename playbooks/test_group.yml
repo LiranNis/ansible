@@ -1,0 +1,15 @@
+---
+- name: test win_group_membership
+  hosts: windows
+  tasks:
+    - name: Add local user user1 to Administrators group
+      win_group_membership:
+        name=user1
+        group=Administrators
+        state=present
+
+    - name: Remove local user user1 from Administrators group
+      win_group_membership:
+        name=user1
+        group=administrators
+        state=present
