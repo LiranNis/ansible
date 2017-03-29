@@ -37,7 +37,7 @@ $result = @{
 
 $name = Get-AnsibleParam -obj $params -name "name" -type "str" -failifempty $true
 $domain = Get-AnsibleParam -obj $params -name "domain" -type "str"
-$groups = Get-AnsibleParam -obj $params -name "groups" -failifempty $true -aliases "group"
+$groups = Get-AnsibleParam -obj $params -name "groups" -failifempty $true -aliases @("group")
 $state = Get-AnsibleParam -obj $params -name "state" -type "str" -default "present" -validateset "present","absent"
 
 ## Test vars:
