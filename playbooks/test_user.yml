@@ -1,0 +1,8 @@
+---
+- name: test win_group_membership
+  hosts: windows2012
+  tasks:
+    - win_group_membership:
+        user=user1
+        group=Administrators
+        state=present

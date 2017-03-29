@@ -13,7 +13,7 @@
     - name: Set C pagefile, dont override if exists
       win_pagefile:
         drive=C
-        iשnitial_size=1024
+        initial_size=1024
         maximum_size=1024
         override=false
         state=present
