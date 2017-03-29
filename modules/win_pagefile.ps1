@@ -39,16 +39,6 @@ $result = @{
     changed = $false
 }
 
-#$automatic = $false # Done
-#$drive = "C" # Add different variations
-#$initialSize = 0 # Done
-#$maximumSize = 0 # Done
-#$override = $true
-#$fullPath = $drive + ":\pagefile.sys"
-#$removeAll = $false # Done
-#$state = "present" # Done
-#$systemManaged = $false # Done
-
 $automatic = Get-AnsibleParam -obj $params -name "automatic" -type "bool"
 $drive = Get-AnsibleParam -obj $params -name "drive" -type "str"
 $fullPath = $drive + ":\pagefile.sys"
@@ -60,6 +50,17 @@ $state = Get-AnsibleParam -obj $params -name "state" -type "str" -default "query
 $systemManaged = Get-AnsibleParam -obj $params -name "system_managed" -type "bool" -default $false
 
 $ErrorActionPreference = "Stop"
+
+## Test vars:
+#$automatic = $false # Done
+#$drive = "C" # Add different variations
+#$initialSize = 0 # Done
+#$maximumSize = 0 # Done
+#$override = $true
+#$fullPath = $drive + ":\pagefile.sys"
+#$removeAll = $false # Done
+#$state = "present" # Done
+#$systemManaged = $false # Done
 
 if ($removeAll) {
     #New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management\" -Name PagingFiles -Value "" -PropertyType MultiString -Force
