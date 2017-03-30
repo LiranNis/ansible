@@ -53,7 +53,7 @@ if ($domain) {
 }
 
 if ($member.path -eq $null) {
-    Fail-Json $result "object '$name' not found"
+    Fail-Json $result "Object '$name@$domain' not found"
 }
 
 If ($groups -is [System.String]) {
