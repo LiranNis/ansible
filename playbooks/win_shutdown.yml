@@ -8,3 +8,8 @@
   hosts: dc
   tasks:
     - raw: shutdown /s /t 0
+
+- name: shutdown this server
+  hosts: localhost
+  tasks:
+    - raw: shutdown now

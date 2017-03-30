@@ -28,65 +28,34 @@ ANSIBLE_METADATA = {'metadata_version': '1.0',
 
 DOCUMENTATION = r'''
 ---
-module: win_pagefile
+module: win_group_membership
 version_added: "2.3"
-short_description: Query or change pagefile configuration
+short_description: Add or remove local or domain object to a local group
 description:
-    - Query current pagefiles
-    - Enable/Disable automatic managed pagefile
-    - Create new or override pagefile
+    - Add or remove local or domain object to a local group
 options:
-  drive:
+  name:
     description:
-      - The drive of the pagefile.
-    required: false
-  initial_size:
+      - The name of the object.
+    required: true
+  domain:
     description:
-      - The initial size of the pagefile.
-  maximum_size:
+      - The domain of the object.
+      - Leave empty for local object.
+  groups:
     description:
-      - The maximum size of the pagefile.
-  override:
-    description:
-      - Override the current pagefile on the drive.
-    choices:
-      - true
-      - false
-    default: true
-  system_managed:
-    description:
-      - Configures current pagefile to be managed by the system.
-    choices:
-      - true
-      - false
-    default: false
-  automatic:
-    description:
-      - Configures automatic managed pagefile for the entire system.
-    choices:
-      - true
-      - false
-  remove_all:
-    description:
-      - Remove all pagefiles in the system, not including automatic managed.
-    choices:
-      - true
-      - false
-    default: false
+      - The groups. 
+      - can contain multiple groups comma separated.
+    required: true
+    aliases: [ group ]
   state:
     description:
-      - State of the pagefile: present, absent, query.
+      - State of the user in the group: present, absent.
     choices:
       - present
       - absent
-      - query
     default: present
 notes:
-- There is difference between automatic managed pagefiles that configured once for the entire system and system managed pagefile that configured per pagefile.
-- InitialSize 0 and MaximumSize 0 means the pagefile is managed by the system.
-- "Value out of range" exception may be caused by several different issues, two common problems:
-  - No such drive
-  - Pagefile size is too small
 author: "Liran Nisanov (@LiranNis)"
 '''
 

@@ -42,18 +42,24 @@ $state = Get-AnsibleParam -obj $params -name "state" -type "str" -default "prese
 
 ## Test vars:
 #$name = "TEST.COM/TestGroup"
-#$domain = "TEST.COM"
+#$domain = "TEST.COM" # Domain User
+#$domain = $null # Local User
 #$groups = "Remote Desktop Users"
 #$name = "Liran"
 
 if ($domain) {
-    $member = ([ADSI]"WinNT://$domain/$name")
+    $path = "WinNT://$domain/$name"
+#    $member = ([ADSI]"WinNT://$domain/$name")
 } else {
-    $member = ([ADSI]"WinNT://$env:COMPUTERNAME/$name")
+    $path = "WinNT://$env:COMPUTERNAME/$name"
+#    $member = ([ADSI]"WinNT://$env:COMPUTERNAME/$name")
 }
 
-if ($member.path -eq $null) {
-    Fail-Json $result "Object '$name@$domain' not found"
+if ([ADSI]::Exists($path)) {
+    $member = ([ADSI]$path)
+} else {
+#if (($member) -and (($member.adspath) -eq $null)) {
+    Fail-Json $result "Object '$name' not found"
 }
 
 If ($groups -is [System.String]) {
@@ -72,12 +78,11 @@ try
                 $group_obj = Get-Group $grp
                 if ($group_obj) {
                     try {
-                        $group_obj.Remove($member.adspath)
+                        $group_obj.Remove($path) #$member.adspath)
                         $result.changed = $true
                     } catch {
                         $errorMessage = $_.Exception.Message
-                        if ($errorMessage -notcontains "The specified account name is not a member of 
-the group.") {
+                        if ($errorMessage -notlike "*The specified account name is not a member of the group.*") {
                             Fail-Json $result "Failed to remove object $name - $errorMessage"
                         }
                     }
@@ -92,14 +97,13 @@ the group.") {
                 $group_obj = Get-Group $grp
                 if ($group_obj) {
                     try {
-                        if (!$group_obj.IsMember($member.adspath)) {
-                            $group_obj.Add($member.adspath)
+                        if (!$group_obj.IsMember($path)) { #$member.adspath)) {
+                            $group_obj.Add($path)#$member.adspath)
                             $result.changed = $true
                         }
                     } catch {
                         $errorMessage = $_.Exception.Message
-                        if ($errorMessage -notcontains "The specified account name is already a member of 
-the group.") {
+                        if ($errorMessage -notlike "*The specified account name is already a member of the group.*") {
                             Fail-Json $result "Failed to add object $name - $errorMessage"
                         }
                     }
