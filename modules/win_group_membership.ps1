@@ -42,9 +42,9 @@ $state = Get-AnsibleParam -obj $params -name "state" -type "str" -default "prese
 
 ## Test vars:
 #$name = "TEST.COM/TestGroup"
-$domain = "TEST.COM"
-$groups = "Remote Desktop Users"
-$name = "Liran"
+#$domain = "TEST.COM"
+#$groups = "Remote Desktop Users"
+#$name = "Liran"
 
 if ($domain) {
     $member = ([ADSI]"WinNT://$domain/$name")
