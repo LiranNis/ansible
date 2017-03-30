@@ -109,7 +109,7 @@ if ($state -eq "absent") {
     }
 
     # Make sure drive is accessible
-    if (!Test-Path "${drive}:") {
+    if (!(Test-Path "${drive}:")) {
         Fail-Json $result "Unable to access '${drive}:' drive"
     }
 
