@@ -42,9 +42,9 @@ $state = Get-AnsibleParam -obj $params -name "state" -type "str" -default "prese
 
 ## Test vars:
 #$name = "TEST.COM/TestGroup"
-#$domain = "TEST.COM"
-#$groups = "Administrators"
-#$name = "user1"
+$domain = "TEST.COM"
+$groups = "Remote Desktop Users"
+$name = "Liran"
 
 if ($domain) {
     $member = ([ADSI]"WinNT://$domain/$name")
@@ -52,7 +52,7 @@ if ($domain) {
     $member = ([ADSI]"WinNT://$env:COMPUTERNAME/$name")
 }
 
-if ($member -eq $null) {
+if ($member.path -eq $null) {
     Fail-Json $result "object '$name' not found"
 }
 
@@ -69,31 +69,43 @@ try
     if ($null -ne $groups) {
         if ($state -eq "absent") {
             foreach ($grp in $groups) {
-                #$group_obj = $adsi.Children | where { $_.SchemaClassName -eq 'Group' -and $_.Name -eq $grp }
                 $group_obj = Get-Group $grp
                 if ($group_obj) {
-                    if (($group_obj.Members() | foreach {$_.GetType().InvokeMember("adspath", 'GetProperty', $null, $_, $null)}) -contains $member.adspath) {
+                    try {
                         $group_obj.Remove($member.adspath)
                         $result.changed = $true
+                    } catch {
+                        $errorMessage = $_.Exception.Message
+                        if ($errorMessage -notcontains "The specified account name is not a member of 
+the group.") {
+                            Fail-Json $result "Failed to remove object $name - $errorMessage"
+                        }
                     }
                 }
                 else {
-                    Fail-Json $result "group '$grp' not found"
+                    Fail-Json $result "Group '$grp' not found"
                 }
             }
         }
         elseif ($state -eq "present") {
             foreach ($grp in $groups) {
-                #$group_obj = $adsi.Children | where { $_.SchemaClassName -eq 'Group' -and $_.Name -eq $grp }
                 $group_obj = Get-Group $grp
                 if ($group_obj) {
-                    if (($group_obj.Members() | foreach {$_.GetType().InvokeMember("adspath", 'GetProperty', $null, $_, $null)}) -notcontains $member.adspath) {
-                        $group_obj.Add($member.adspath)
-                        $result.changed = $true
+                    try {
+                        if (!$group_obj.IsMember($member.adspath)) {
+                            $group_obj.Add($member.adspath)
+                            $result.changed = $true
+                        }
+                    } catch {
+                        $errorMessage = $_.Exception.Message
+                        if ($errorMessage -notcontains "The specified account name is already a member of 
+the group.") {
+                            Fail-Json $result "Failed to add object $name - $errorMessage"
+                        }
                     }
                 }
                 Else {
-                    Fail-Json $result "group '$grp' not found"
+                    Fail-Json $result "Group '$grp' not found"
                 }
             }
         }
