@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-# (c) 2017, Liran Nisanov <lirannis@chathamfinancial.com>
+# (c) 2017, Liran Nisanov <lirannis@gmail.com>
 #
 # This file is part of Ansible
 #
@@ -29,12 +29,12 @@ ANSIBLE_METADATA = {'metadata_version': '1.0',
 DOCUMENTATION = r'''
 ---
 module: win_pagefile
-version_added: "2.3"
+version_added: "2.3.1"
 short_description: Query or change pagefile configuration
 description:
-    - Query current pagefiles
-    - Enable/Disable automatic managed pagefile
-    - Create new or override pagefile
+    - Query current pagefile configuration
+    - Enable/Disable AutomaticManagedPagefile
+    - Create new or override pagefile configuration
 options:
   drive:
     description:
@@ -62,7 +62,7 @@ options:
     default: false
   automatic:
     description:
-      - Configures automatic managed pagefile for the entire system.
+      - Configures AutomaticManagedPagefile for the entire system.
     choices:
       - true
       - false
@@ -75,7 +75,7 @@ options:
     default: false
   state:
     description:
-      - State of the pagefile: present, absent, query.
+      - State of the pagefile.
     choices:
       - present
       - absent
@@ -84,27 +84,27 @@ options:
 notes:
 - There is difference between automatic managed pagefiles that configured once for the entire system and system managed pagefile that configured per pagefile.
 - InitialSize 0 and MaximumSize 0 means the pagefile is managed by the system.
-- "Value out of range" exception may be caused by several different issues, two common problems:
-  - No such drive.
-  - Pagefile size is too small.
-- Setting a pagefile when automatic managed pagefile is on will disable it.
+- Value out of range exception may be caused by several different issues, two common problems - No such drive, Pagefile size is too small.
+- Setting a pagefile when AutomaticManagedPagefile is on will disable the AutomaticManagedPagefile.
 author: "Liran Nisanov (@LiranNis)"
 '''
 
 EXAMPLES = r'''
-- name: Query all current pagefiles
+- name: Query pagefiles configuration
   win_pagefile:
+
 - name: Query C pagefile
   win_pagefile:
     drive=c
 
-- name: Set C pagefile, dont override if exists
+- name: Set C pagefile, don't override if exists
   win_pagefile:
     drive=C
-    iשnitial_size=1024
+    initial_size=1024
     maximum_size=1024
     override=false
     state=present
+
 - name: Set C pagefile, override if exists
   win_pagefile:
     drive=C
@@ -117,12 +117,12 @@ EXAMPLES = r'''
     drive=c
     state=absent
 
-- name: Remove all current pagefiles, enable automatic managed pagefile and query at the end.
+- name: Remove all current pagefiles, enable AutomaticManagedPagefile and query at the end
   win_pagefile:
     remove_all=true
     automatic=true
 
-- name: Remove all pagefiles disable automatic managed pagefile and set C pagefile
+- name: Remove all pagefiles disable AutomaticManagedPagefile and set C pagefile
   win_pagefile:
     drive=c
     initial_size=2048
@@ -130,6 +130,7 @@ EXAMPLES = r'''
     remove_all=true
     automatic=false
     state=present
+
 - name: Set D pagefile, override if exists
   win_pagefile:
     drive=d

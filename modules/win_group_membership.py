@@ -29,7 +29,7 @@ ANSIBLE_METADATA = {'metadata_version': '1.0',
 DOCUMENTATION = r'''
 ---
 module: win_group_membership
-version_added: "2.3"
+version_added: "2.3.1"
 short_description: Add or remove local or domain object to a local group
 description:
     - Add or remove local or domain object to a local group
@@ -47,10 +47,11 @@ options:
       - The groups. 
       - can contain multiple groups comma separated.
     required: true
-    aliases: [ group ]
+    aliases: 
+      - group
   state:
     description:
-      - State of the user in the group: present, absent.
+      - State of the user in the group.
     choices:
       - present
       - absent
