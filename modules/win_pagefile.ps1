@@ -44,26 +44,14 @@ $drive = Get-AnsibleParam -obj $params -name "drive" -type "str"
 $fullPath = $drive + ":\pagefile.sys"
 $initialSize = Get-AnsibleParam -obj $params -name "initial_size" -type "int"
 $maximumSize = Get-AnsibleParam -obj $params -name "maximum_size" -type "int"
-$override =  Get-AnsibleParam -obj $params -name "override" -type "bool" -default $true # default value?
+$override =  Get-AnsibleParam -obj $params -name "override" -type "bool" -default $true
 $removeAll = Get-AnsibleParam -obj $params -name "remove_all" -type "bool" -default $false
 $state = Get-AnsibleParam -obj $params -name "state" -type "str" -default "query" -validateset "present","absent","query"
 $systemManaged = Get-AnsibleParam -obj $params -name "system_managed" -type "bool" -default $false
 
 $ErrorActionPreference = "Stop"
 
-## Test vars:
-#$automatic = $false # Done
-#$drive = "C" # Add different variations
-#$initialSize = 0 # Done
-#$maximumSize = 0 # Done
-#$override = $true
-#$fullPath = $drive + ":\pagefile.sys"
-#$removeAll = $false # Done
-#$state = "present" # Done
-#$systemManaged = $false # Done
-
 if ($removeAll) {
-    #New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management\" -Name PagingFiles -Value "" -PropertyType MultiString -Force
     Get-WmiObject Win32_PageFileSetting | Remove-WmiObject | Out-Null
 }
 
