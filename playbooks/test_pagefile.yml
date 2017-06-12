@@ -7,49 +7,49 @@
 
     - name: Query C pagefile
       win_pagefile:
-        drive=c
+        drive: C
 
     # Set C Pagefile, dont override
     - name: Set C pagefile, dont override if exists
       win_pagefile:
-        drive=C
-        initial_size=1024
-        maximum_size=1024
-        override=false
-        state=present
+        drive: C
+        initial_size: 1024
+        maximum_size: 1024
+        override: false
+        state: present
 
     - name: Query C pagefile to check if the operation succeeded
       win_pagefile:
-        drive=c
+        drive: C
 
     # Set C Pagefile, override
     - name: Set C pagefile, override if exists
       win_pagefile:
-        drive=C
-        initial_size=1024
-        maximum_size=1024
-        state=present
+        drive: C
+        initial_size: 1024
+        maximum_size: 1024
+        state: present
 
     - name: Query C pagefile to check if the operation succeeded
       win_pagefile:
-        drive=c
+        drive: C
 
     # Remove C Pagefile
     - name: Remove C pagefile
       win_pagefile:
-        drive=c
-        state=absent
+        drive: c
+        state: absent
     - name: Query C pagefile - No C pagefile
       win_pagefile:
-        drive=c
+        drive: c
 
     # Create C: pagefile and set automatic as true
     - name: Create C pagefile
       win_pagefile:
-        drive=c
-        initial_size=1024
-        maximum_size=1024
-        state=present
+        drive: c
+        initial_size: 1024
+        maximum_size: 1024
+        state: present
 
     - name: Query all current pagefiles, c-1024-1024, automatic true
       win_pagefile:
@@ -57,8 +57,8 @@
     # Remove all current pagefiles and disable automatic managed pagefile
     - name: Remove all current pagefiles, enable automatic managed pagefile and query at the end.
       win_pagefile:
-        remove_all=true
-        automatic=true
+        remove_all: true
+        automatic: true
     
     - name: Query all current pagefiles - no pagefiles, automatic true
       win_pagefile:
@@ -66,20 +66,20 @@
     # Remove all current pagefiles, disable automatic pagefile and set C pagefile
     - name: Remove all pagefiles disable automaticd manage pagefile and set C pagefile
       win_pagefile:
-        drive=c
-        initial_size=2048
-        maximum_size=2048
-        remove_all=true
-        automatic=false
-        state=present
+        drive: C
+        initial_size: 2048
+        maximum_size: 2048
+        remove_all: true
+        automatic: false
+        state: present
 
     # Set D Pagefile
     - name: Set D pagefile
       win_pagefile:
-        drive=d
-        initial_size=1024
-        maximum_size=1024
-        state=present
+        drive: d
+        initial_size: 1024
+        maximum_size: 1024
+        state: present
 
     - name: Query all pagefiles, C-2048-2048, D-1024-1024
       win_pagefile:
@@ -87,7 +87,7 @@
     # Set E Pagefile - fail (no such drive)
     - name: Set E pagefile (fail)
       win_pagefile:
-        drive=e
-        initial_size=1024
-        maximum_size=1024
-        state=present
+        drive: e
+        initial_size: 1024
+        maximum_size: 1024
+        state: present
