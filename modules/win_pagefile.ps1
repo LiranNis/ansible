@@ -81,8 +81,7 @@ if ($state -eq "absent") {
             Fail-Json $result "Failed to remove pagefile $_.Exception.Message"
         }
     }
-} elseif ($state -eq "present") {
-    
+} elseif ($state -eq "present") {   
     # Remove current pagefile
     if ($override) {
         if ((Get-Pagefile $fullPath) -ne $null)
@@ -126,8 +125,8 @@ if ($state -eq "absent") {
             $pagefiles = Get-Pagefile $fullPath
         }
 
+        # Get all pagefiles
         foreach ($currentPagefile in $pagefiles) {
-            
             $currentPagefileObject = @{
                 name = $currentPagefile.Name
                 initial_size = $currentPagefile.InitialSize
@@ -139,6 +138,7 @@ if ($state -eq "absent") {
             $result.pagefiles += $currentPagefileObject
         }
 
+        # Get automatic managed pagefile state
         $result.automatic_managed_pagefiles = (Get-WmiObject -Class win32_computersystem).AutomaticManagedPagefile
     } catch {
         Fail-Json $result "Failed to query current pagefiles $_.Exception.Message"

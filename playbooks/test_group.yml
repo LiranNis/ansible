@@ -29,34 +29,34 @@
     - name: Add domain user to local Remote Desktop Users group (changed)
       win_group_membership:
         name=Liran
-        domain=TEST.COM
+        domain=AWESOME.DOMAIN
         group="Remote Desktop Users"
         state=present
 
     - name: Try to add the domain user to the group again (ok)
       win_group_membership:
         name=Liran
-        domain=TEST.COM
+        domain=AWESOME.DOMAIN
         group="Remote Desktop Users"
         state=present
 
     - name: Remove the domain user from the group (changed)
       win_group_membership:
         name=Liran
-        domain=TEST.COM
+        domain=AWESOME.DOMAIN
         group="Remote Desktop Users"
         state=absent
 
     - name: Try to remove the domain user from the group (ok)
       win_group_membership:
         name=Liran
-        domain=TEST.COM
+        domain=AWESOME.DOMAIN
         group="Remote Desktop Users"
         state=absent
 
     - name: Try to add domain user to multiple groups
       win_group_membership:
         name=liran
-        domain=test
+        domain=awesome
         state=present
         groups="Administrators,Remote Desktop Users"

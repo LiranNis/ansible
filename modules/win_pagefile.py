@@ -140,11 +140,15 @@ EXAMPLES = r'''
 '''
 
 RETURN = r'''
-automatic:
-    description: whether the pagefiles is automatically managed
+automatic_managed_pagefiles:
+    description: Whether the pagefiles is automatically managed
+    returned: When state is query.   
     type: boolean
     sample: true
 pagefiles:
-    description: Pagefiles on the system (only when state is query)
-    type: hash
+    description: Pagefiles on the system.
+    returned: When state is query.
+    type: JSON that contains caption, description, initial_size, maximum_size and name.
+    sample: [{"caption": "c:\\ 'pagefile.sys'", "description": "'pagefile.sys' @ c:\\", "initial_size": 2048, "maximum_size": 2048, "name": "c:\\pagefile.sys"}, {"caption": "d:\\ 'pagefile.sys'", "description": "'pagefile.sys' @ d:\\", "initial_size": 1024, "maximum_size": 1024, "name": "d:\\pagefile.sys"}]
+
 '''
