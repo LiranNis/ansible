@@ -21,9 +21,9 @@
 
 ########
 
-Function Remove-Pagefile($path) 
+Function Remove-Pagefile($path, $whatif) 
 {
-    Get-WmiObject Win32_PageFileSetting | WHERE { $_.Name -eq $path } | Remove-WmiObject
+    Get-WmiObject Win32_PageFileSetting | WHERE { $_.Name -eq $path } | Remove-WmiObject -WhatIf:$whatif
 }
 
 Function Get-Pagefile($path)
@@ -53,9 +53,7 @@ $result = @{
 if ($removeAll) {
     $currentPageFiles = Get-WmiObject Win32_PageFileSetting
     if ($currentPageFiles -ne $null) {
-        if (-not $check_mode) {
-            $currentPageFiles | Remove-WmiObject | Out-Null
-        }
+        $currentPageFiles | Remove-WmiObject -WhatIf:$check_mode | Out-Null
         $result.changed = $true
     }
 }
@@ -82,9 +80,7 @@ if ($state -eq "absent") {
     if ((Get-Pagefile $fullPath) -ne $null)
     {
         try {
-            if (-not $check_mode) {
-                Remove-Pagefile $fullPath
-            }
+            Remove-Pagefile $fullPath -whatif:$check_mode
             $result.changed = $true
         } catch {
             Fail-Json $result "Failed to remove pagefile $_.Exception.Message"
@@ -96,9 +92,7 @@ if ($state -eq "absent") {
         if ((Get-Pagefile $fullPath) -ne $null)
         {
             try {
-                if (-not $check_mode) {
-                    Remove-Pagefile $fullPath
-                }
+                Remove-Pagefile $fullPath -whatif:$check_mode
                 $result.changed = $true
             } catch {
                 Fail-Json $result "Failed to remove current pagefile $_.Exception.Message"
