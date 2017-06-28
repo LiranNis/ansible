@@ -108,11 +108,11 @@ if ($state -eq "absent") {
     # Set pagefile
     try {
         if ((Get-Pagefile $fullPath) -eq $null) {
-            $pagefile = Set-WmiInstance -Class Win32_PageFileSetting -Arguments @{name = $fullPath; InitialSize = 0; MaximumSize = 0}
-            if (!$systemManaged) {
-                $pagefile.InitialSize = $initialSize
-                $pagefile.MaximumSize = $maximumSize
-                if (-not $check_mode) {
+            if (-not $check_mode) {
+                $pagefile = Set-WmiInstance -Class Win32_PageFileSetting -Arguments @{name = $fullPath; InitialSize = 0; MaximumSize = 0}
+                if (!$systemManaged) {
+                    $pagefile.InitialSize = $initialSize
+                    $pagefile.MaximumSize = $maximumSize
                     $pagefile.Put() | out-null
                 }
             }
