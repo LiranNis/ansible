@@ -29,10 +29,10 @@ ANSIBLE_METADATA = {'metadata_version': '1.0',
 DOCUMENTATION = r'''
 ---
 module: win_group_membership
-version_added: "2.3.1"
-short_description: Add or remove local or domain object to a local group
+version_added: "2.4"
+short_description: Add or remove local or domain object from a local group
 description:
-    - Add or remove local or domain object to a local group
+    - Add or remove local or domain object from a local group
 options:
   name:
     description:
@@ -57,68 +57,12 @@ options:
       - absent
     default: present
 notes:
-author: "Liran Nisanov (@LiranNis)"
+author: 
+- "Liran Nisanov (@LiranNis)"
 '''
 
 EXAMPLES = r'''
-- name: Create registry path MyCompany
-  win_regedit:
-    path: HKCU:\Software\MyCompany
-- name: Add or update registry path MyCompany, with entry 'hello', and containing 'world'
-  win_regedit:
-    path: HKCU:\Software\MyCompany
-    name: hello
-    data: world
-- name: Add or update registry path MyCompany, with entry 'hello', and containing 1337
-  win_regedit:
-    path: HKCU:\Software\MyCompany
-    name: hello
-    data: 1337
-    type: dword
-- name: Add or update registry path MyCompany, with entry 'hello', and containing binary data in hex-string format
-  win_regedit:
-    path: HKCU:\Software\MyCompany
-    name: hello
-    data: hex:be,ef,be,ef,be,ef,be,ef,be,ef
-    type: binary
-- name: Add or update registry path MyCompany, with entry 'hello', and containing binary data in yaml format
-  win_regedit:
-    path: HKCU:\Software\MyCompany
-    name: hello
-    data: [0xbe,0xef,0xbe,0xef,0xbe,0xef,0xbe,0xef,0xbe,0xef]
-    type: binary
-- name: Disable keyboard layout hotkey for all users (changes existing)
-  win_regedit:
-    path: HKU:\.DEFAULT\Keyboard Layout\Toggle
-    name: Layout Hotkey
-    data: 3
-    type: dword
-- name: Disable language hotkey for current users (adds new)
-  win_regedit:
-    path: HKCU:\Keyboard Layout\Toggle
-    name: Language Hotkey
-    data: 3
-    type: dword
-- name: Remove registry path MyCompany (including all entries it contains)
-  win_regedit:
-    path: HKCU:\Software\MyCompany
-    state: absent
-- name: Remove entry 'hello' from registry path MyCompany
-  win_regedit:
-    path: HKCU:\Software\MyCompany
-    name: hello
-    state: absent
 '''
 
 RETURN = r'''
-data_changed:
-    description: whether this invocation changed the data in the registry value
-    returned: success
-    type: boolean
-    sample: False
-data_type_changed:
-    description: whether this invocation changed the datatype of the registry value
-    returned: success
-    type: boolean
-    sample: True
 '''

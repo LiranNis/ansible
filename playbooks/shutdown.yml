@@ -1,0 +1,15 @@
+---
+- name: shutdown all my windows vms
+  hosts: windows
+  tasks:
+    - raw: shutdown /s /t 0
+
+- name: shutdown the dc 
+  hosts: dc
+  tasks:
+    - raw: shutdown /s /t 0
+
+- name: shutdown this server
+  hosts: localhost
+  tasks:
+    - raw: shutdown now
