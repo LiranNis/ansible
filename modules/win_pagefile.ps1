@@ -101,9 +101,9 @@ if ($state -eq "absent") {
     }
 
     # Make sure drive is accessible
-    if (-not (Test-Path "${drive}:")) {
-        Fail-Json $result "Unable to access '${drive}:' drive"
-    }
+    #if (-not (Test-Path "${drive}:")) {
+    #    Fail-Json $result "Unable to access '${drive}:' drive"
+    #}
 
     # Set pagefile
     try {
