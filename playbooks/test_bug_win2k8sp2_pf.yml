@@ -1,0 +1,10 @@
+---
+
+- name: Test 2008sp2 pagefile bug
+  hosts: windows2008sp2
+  tasks:
+  - win_pagefile:
+      drive: c
+      initial_size: 512
+      maximum_size: 8192
+      state: present

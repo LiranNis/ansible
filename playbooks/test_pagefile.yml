@@ -1,5 +1,5 @@
 ---
-- name: Create multiple users
+- name: Test pagefile module
   hosts: windows
   tasks:
     - name: Query all current pagefiles
