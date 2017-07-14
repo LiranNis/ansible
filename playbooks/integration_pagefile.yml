@@ -1,5 +1,5 @@
 ---
 - name: test win_pagefile integration
-  hosts: windows
+  hosts: windows2008sp2
   roles:
   - /etc/ansible/tests/integrations/targets/win_pagefile
