@@ -29,16 +29,17 @@ Function Get-Group($group_name)
 
 ########
 
-$params = Parse-Args $args
-
-$result = @{ 
-    changed = $false
-}
+$params = Parse-Args $args -supports_check_mode $true
+$check_mode = Get-AnsibleParam -obj $params -name '_ansible_check_mode' -type 'bool' -default $false
 
 $name = Get-AnsibleParam -obj $params -name "name" -type "str" -failifempty $true
 $domain = Get-AnsibleParam -obj $params -name "domain" -type "str"
 $groups = Get-AnsibleParam -obj $params -name "groups" -failifempty $true -aliases @("group")
 $state = Get-AnsibleParam -obj $params -name "state" -type "str" -default "present" -validateset "present","absent"
+
+$result = @{ 
+    changed = $false
+}
 
 ## Test vars:
 #$name = "TEST.COM/TestGroup"
@@ -70,16 +71,21 @@ If ($groups -is [System.String]) {
 
 $groups = $groups | ForEach { ([string]$_).Trim() } | Where { $_ }
 
-try
-{
-    if ($null -ne $groups) {
-        if ($state -eq "absent") {
-            foreach ($grp in $groups) {
+if ($null -ne $groups) {
+    if ($state -eq "absent") {
+        foreach ($grp in $groups) {
+            try {
                 $group_obj = Get-Group $grp
-                if ($group_obj) {
+            } catch {
+                Fail-Json $result "Failed to get group $grp - $errorMessage"
+            }
+            if ($group_obj) {
+                if (-not $check_mode) {
                     try {
-                        $group_obj.Remove($path) #$member.adspath)
-                        $result.changed = $true
+                        if (-not $group_obj.IsMember($path)) {
+                            $group_obj.Remove($path) #$member.adspath)
+                            $result.changed = $true
+                        }
                     } catch {
                         $errorMessage = $_.Exception.Message
                         if ($errorMessage -notlike "*The specified account name is not a member of the group.*") {
@@ -87,36 +93,33 @@ try
                         }
                     }
                 }
-                else {
-                    Fail-Json $result "Group '$grp' not found"
-                }
             }
-        }
-        elseif ($state -eq "present") {
-            foreach ($grp in $groups) {
-                $group_obj = Get-Group $grp
-                if ($group_obj) {
-                    try {
-                        if (!$group_obj.IsMember($path)) { #$member.adspath)) {
-                            $group_obj.Add($path)#$member.adspath)
-                            $result.changed = $true
-                        }
-                    } catch {
-                        $errorMessage = $_.Exception.Message
-                        if ($errorMessage -notlike "*The specified account name is already a member of the group.*") {
-                            Fail-Json $result "Failed to add object $name - $errorMessage"
-                        }
-                    }
-                }
-                Else {
-                    Fail-Json $result "Group '$grp' not found"
-                }
+            else {
+                Fail-Json $result "Group '$grp' not found"
             }
         }
     }
-} 
-catch {
-    Fail-Json $result $_.Exception.Message
+    elseif ($state -eq "present") {
+        foreach ($grp in $groups) {
+            $group_obj = Get-Group $grp
+            if ($group_obj) {
+                try {
+                    if (!$group_obj.IsMember($path)) { #$member.adspath)) {
+                        $group_obj.Add($path)#$member.adspath)
+                        $result.changed = $true
+                    }
+                } catch {
+                    $errorMessage = $_.Exception.Message
+                    if ($errorMessage -notlike "*The specified account name is already a member of the group.*") {
+                        Fail-Json $result "Failed to add object $name - $errorMessage"
+                    }
+                }
+            }
+            Else {
+                Fail-Json $result "Group '$grp' not found"
+            }
+        }
+    }
 }
 
 Exit-Json $result
