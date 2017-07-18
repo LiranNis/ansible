@@ -2,4 +2,4 @@
 - name: test win_pagefile integration
   hosts: windows
   roles:
-  - /etc/ansible/tests/integrations/targets/win_pagefile
+  - /etc/ansible/tests/integrations/targets/win_group_membership

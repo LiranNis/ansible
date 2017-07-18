@@ -1,5 +1,5 @@
-existing_user: "user1"
-existing_group: "Remote Desktop User"
+existing_user: "existing_user"
+existing_group: "Remote Desktop Users"
 existing_group2: "Guests"
-non_existing_user: "user2"
+non_existing_user: "non_existing_user"
 non_existing_group: "Not a Group"

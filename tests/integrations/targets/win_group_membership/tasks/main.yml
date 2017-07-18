@@ -36,7 +36,7 @@
   win_group_membership:
     name: "{{ existing_user }}"
     group: "{{ existing_group }}"
-    state: absnet
+    state: absent
   register: test3_result
 
 - name: Test 3 verify
@@ -49,7 +49,7 @@
   win_group_membership:
     name: "{{ existing_user }}"
     group: "{{ existing_group }}"
-    state: absnet
+    state: absent
   register: test4_result
 
 - name: Test 4 verify
