@@ -1,12 +1,12 @@
 ---
-- name: Create user1
+- name: Create {{ existing_user }}
   win_user:
     name: "{{ existing_user }}"
     password: TestTest123!
     state: present
 
 # Test 1: Add user to single group
-- name: Add user1 user to group
+- name: Add existing user to group
   win_group_membership:
     name: "{{ existing_user }}"
     group: "{{ existing_group }}"
@@ -19,7 +19,7 @@
     - test1_result.changed == true
 
 # Test 2: Add user to group he is allready in
-- name: Add user1 to group he is allready in 
+- name: Add existing user to group he is allready in 
   win_group_membership:
     name: "{{ existing_user }}"
     group: "{{ existing_group }}"
@@ -32,7 +32,7 @@
     - test2_result.changed == false
 
 # Test 3: Remove user from single group
-- name: Remove user from single group
+- name: Remove existing user from single group
   win_group_membership:
     name: "{{ existing_user }}"
     group: "{{ existing_group }}"
@@ -55,10 +55,10 @@
 - name: Test 4 verify
   assert:
     that:
-    - test4_result.changed == true
+    - test4_result.changed == false
 
 # Test 5: Add user to multiple groups
-- name: Add user1 user to group
+- name: Add user to multiple groups
   win_group_membership:
     name: "{{ existing_user }}"
     groups:
@@ -73,7 +73,7 @@
     - test5_result.changed == true
 
 # Test 6: Remove user from multiple groups
-- name: Add user1 user to group
+- name: Remove user from multiple groups
   win_group_membership:
     name: "{{ existing_user }}"
     groups:
