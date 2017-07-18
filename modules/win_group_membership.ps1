@@ -42,24 +42,21 @@ $result = @{
 }
 
 ## Test vars:
-#$name = "TEST.COM/TestGroup"
-#$domain = "TEST.COM" # Domain User
+#$name = "AWESOME.DOMAIN/TestGroup"
+#$domain = "AWESOME.DOMAIN" # Domain User
 #$domain = $null # Local User
 #$groups = "Remote Desktop Users"
 #$name = "Liran"
 
 if ($domain) {
     $path = "WinNT://$domain/$name"
-#    $member = ([ADSI]"WinNT://$domain/$name")
 } else {
     $path = "WinNT://$env:COMPUTERNAME/$name"
-#    $member = ([ADSI]"WinNT://$env:COMPUTERNAME/$name")
 }
 
 if ([ADSI]::Exists($path)) {
     $member = ([ADSI]$path)
 } else {
-#if (($member) -and (($member.adspath) -eq $null)) {
     Fail-Json $result "Object '$name' not found"
 }
 
@@ -82,10 +79,8 @@ if ($null -ne $groups) {
             if ($group_obj) {
                 if (-not $check_mode) {
                     try {
-                        if (-not $group_obj.IsMember($path)) {
-                            $group_obj.Remove($path) #$member.adspath)
-                            $result.changed = $true
-                        }
+                        $group_obj.Remove($path)
+                        $result.changed = $true
                     } catch {
                         $errorMessage = $_.Exception.Message
                         if ($errorMessage -notlike "*The specified account name is not a member of the group.*") {
@@ -103,19 +98,19 @@ if ($null -ne $groups) {
         foreach ($grp in $groups) {
             $group_obj = Get-Group $grp
             if ($group_obj) {
-                try {
-                    if (!$group_obj.IsMember($path)) { #$member.adspath)) {
-                        $group_obj.Add($path)#$member.adspath)
+                if (-not $check_mode) {
+                    try {
+                        $group_obj.Add($path)
                         $result.changed = $true
-                    }
-                } catch {
-                    $errorMessage = $_.Exception.Message
-                    if ($errorMessage -notlike "*The specified account name is already a member of the group.*") {
-                        Fail-Json $result "Failed to add object $name - $errorMessage"
+                    } catch {
+                        $errorMessage = $_.Exception.Message
+                        if ($errorMessage -notlike "*The specified account name is already a member of the group.*") {
+                            Fail-Json $result "Failed to add object $name - $errorMessage"
+                        }
                     }
                 }
             }
-            Else {
+            else {
                 Fail-Json $result "Group '$grp' not found"
             }
         }
