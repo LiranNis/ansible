@@ -1,0 +1,124 @@
+---
+- name: Create user1
+  win_user:
+    name: "{{ existing_user }}"
+    password: TestTest123!
+    state: present
+
+# Test 1: Add user to single group
+- name: Add user1 user to group
+  win_group_membership:
+    name: "{{ existing_user }}"
+    group: "{{ existing_group }}"
+    state: present
+  register: test1_result
+
+- name: Test 1 verify
+  assert:
+    that:
+    - test1_result.changed == true
+
+# Test 2: Add user to group he is allready in
+- name: Add user1 to group he is allready in 
+  win_group_membership:
+    name: "{{ existing_user }}"
+    group: "{{ existing_group }}"
+    state: present
+  register: test2_result
+
+- name: Test 2 verify
+  assert:
+    that:
+    - test2_result.changed == false
+
+# Test 3: Remove user from single group
+- name: Remove user from single group
+  win_group_membership:
+    name: "{{ existing_user }}"
+    group: "{{ existing_group }}"
+    state: absnet
+  register: test3_result
+
+- name: Test 3 verify
+  assert:
+    that:
+    - test3_result.changed == true
+
+# Test 4: Remove user from single group he is not in
+- name: Remove user from single group he is not in
+  win_group_membership:
+    name: "{{ existing_user }}"
+    group: "{{ existing_group }}"
+    state: absnet
+  register: test4_result
+
+- name: Test 4 verify
+  assert:
+    that:
+    - test4_result.changed == true
+
+# Test 5: Add user to multiple groups
+- name: Add user1 user to group
+  win_group_membership:
+    name: "{{ existing_user }}"
+    groups:
+    - "{{ existing_group }}"
+    - "{{ existing_group2 }}"
+    state: present
+  register: test5_result
+
+- name: Test 5 verify
+  assert:
+    that:
+    - test5_result.changed == true
+
+# Test 6: Remove user from multiple groups
+- name: Add user1 user to group
+  win_group_membership:
+    name: "{{ existing_user }}"
+    groups:
+    - "{{ existing_group }}"
+    - "{{ existing_group2 }}"
+    state: absent
+  register: test6_result
+
+- name: Test 6 verify
+  assert:
+    that:
+    - test6_result.changed == true
+
+# Test 7: Add non-existing user to existing group
+- name: Add non-existing user to existing group
+  win_group_membership:
+    name: "{{ non_existing_user }}"
+    group: "{{ existing_group }}"
+    state: present
+  register: test7_result
+  ignore_errors: yes
+
+- name: Test 7 verify
+  assert:
+    that:
+    - test7_result.changed == false
+    - test7_result.failed == true
+
+# Test 8: Add existing user to non-existing group
+- name: Add non-existing user to existing group
+  win_group_membership:
+    name: "{{ existing_user }}"
+    group: "{{ non_existing_group }}"
+    state: present
+  register: test7_result
+  ignore_errors: yes
+
+- name: Test 7 verify
+  assert:
+    that:
+    - test7_result.changed == false
+    - test7_result.failed == true
+
+# Delete the user
+- name: Delete user1
+  win_user:
+    name: "{{ existing_user }}"
+    state: absent

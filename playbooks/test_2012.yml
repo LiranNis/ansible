@@ -1,0 +1,5 @@
+---
+
+- name: Test pagefile module
+  hosts: windows
+  tasks: 
