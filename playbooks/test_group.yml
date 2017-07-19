@@ -1,62 +1,80 @@
 ---
 - name: test win_group_membership
-  hosts: windows
+  hosts: windows2012
   tasks:
     - name: Add local user user1 to Administrators group (changed)
       win_group_membership:
-        name=user1
-        group=Administrators
-        state=present
+        name: user1
+        group: Administrators
+        state: present
 
     - name: Try to add the local user again (ok)
       win_group_membership:
-        name=user1
-        group=Administrators
-        state=present
+        name: user1
+        group: Administrators
+        state: present
 
     - name: Remove local user user1 from Administrators group (changed)
       win_group_membership:
-        name=user1
-        group=administrators
-        state=absent
+        name: user1
+        group: administrators
+        state: absent
 
     - name: Try to remove the local user from the group (ok)
       win_group_membership:
-        name=user1
-        group=administrators
-        state=absent
+        name: user1
+        group: administrators
+        state: absent
  
     - name: Add domain user to local Remote Desktop Users group (changed)
       win_group_membership:
-        name=Liran
-        domain=AWESOME.DOMAIN
-        group="Remote Desktop Users"
-        state=present
+        name: Liran
+        domain: AWESOME.DOMAIN
+        group: Remote Desktop Users
+        state: present
 
     - name: Try to add the domain user to the group again (ok)
       win_group_membership:
-        name=Liran
-        domain=AWESOME.DOMAIN
-        group="Remote Desktop Users"
-        state=present
+        name: Liran
+        domain: AWESOME.DOMAIN
+        group: "Remote Desktop Users"
+        state: present
 
     - name: Remove the domain user from the group (changed)
       win_group_membership:
-        name=Liran
-        domain=AWESOME.DOMAIN
-        group="Remote Desktop Users"
-        state=absent
+        name: Liran
+        domain: AWESOME.DOMAIN
+        group: "Remote Desktop Users"
+        state: absent
 
     - name: Try to remove the domain user from the group (ok)
       win_group_membership:
-        name=Liran
-        domain=AWESOME.DOMAIN
-        group="Remote Desktop Users"
-        state=absent
+        name: Liran
+        domain: AWESOME.DOMAIN
+        group: "Remote Desktop Users"
+        state: absent
 
     - name: Try to add domain user to multiple groups
       win_group_membership:
-        name=liran
-        domain=awesome
-        state=present
-        groups="Administrators,Remote Desktop Users"
+        name: liran
+        domain: awesome
+        state: present
+        groups: "Administrators,Remote Desktop Users"
+
+    - name: Add domain group Support to multiple groups
+      win_group_membership:
+        name: Support
+        domain: awesome.domain
+        groups:
+          - Remote Desktop Users
+          - Remote Management Users
+        state: present
+
+    - name: Remove domain group Support from multiple groups
+      win_group_membership:
+        name: Support
+        domain: awesome.domain
+        groups:
+          - Remote Desktop Users
+          - Remote Management Users
+        state: absent

@@ -63,6 +63,49 @@ author:
 '''
 
 EXAMPLES = r'''
+- name: Add local user User1 to Administrators group
+  win_group_membership:
+    name: User1
+    group: Administrators
+    state: present
+
+ - name: Remove local user User1 from Administrators group
+   win_group_membership:
+     name: User1
+     group: administrators
+     state: absent
+
+ - name: Add domain user User to local Remote Desktop Users group
+   win_group_membership:
+     name: User
+     domain: AWESOME.DOMAIN
+     group: Remote Desktop Users
+     state: present
+
+- name: Remove the domain user USER from the group
+  win_group_membership:
+    name: User
+    domain: AWESOME.DOMAIN
+    group: Remote Desktop Users
+    state: absent
+
+- name: Add domain group Support to multiple groups
+  win_group_membership:
+    name: Support
+    domain: awesome
+    groups:
+      - Remote Desktop Users
+      - Remote Management Users
+    state: present
+
+- name: Remove domain group Support from multiple groups
+  win_group_membership:
+    name: Support
+    domain: awesome.domain
+    groups:
+      - Remote Desktop Users
+      - Remote Management Users
+    state: absent
 '''
 
 RETURN = r'''
