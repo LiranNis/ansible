@@ -32,7 +32,7 @@ module: win_group_membership
 version_added: "2.4"
 short_description: Add or remove local or domain object from a local group
 description:
-    - Add or remove local or domain object from a local group
+    - Add or remove local or domain object from a local group.
 options:
   name:
     description:
@@ -57,6 +57,7 @@ options:
       - absent
     default: present
 notes:
+- Adding non-existing user to a group or a user to non-existing group will cause this module to fail.
 author: 
 - "Liran Nisanov (@LiranNis)"
 '''
