@@ -1,0 +1,8 @@
+---
+
+- name: Windows 2012 deploy playbook
+  hosts: all
+  roles:
+  - win_foreman_built
+  vars_files:
+    - ../group_vars/all.yml
