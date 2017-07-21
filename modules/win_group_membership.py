@@ -59,7 +59,7 @@ options:
 notes:
 - Adding non-existing user to a group or a user to non-existing group will cause this module to fail.
 author: 
-- "Liran Nisanov (@LiranNis)"
+- Liran Nisanov (@LiranNis)
 '''
 
 EXAMPLES = r'''
