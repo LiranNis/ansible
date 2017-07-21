@@ -44,8 +44,7 @@ options:
       - Leave empty for local object.
   groups:
     description:
-      - The groups. 
-      - can contain multiple groups comma separated.
+      - The groups to add the object, can contain multiple groups comma separated or list of groups.
     required: true
     aliases: 
       - group
