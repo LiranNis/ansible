@@ -77,16 +77,19 @@ if ($null -ne $groups) {
                 Fail-Json $result "Failed to get group $grp - $errorMessage"
             }
             if ($group_obj) {
-                if (-not $check_mode) {
-                    try {
-                        $group_obj.Remove($path)
-                        $result.changed = $true
-                    } catch {
-                        $errorMessage = $_.Exception.Message
-                        if ($errorMessage -notlike "*The specified account name is not a member of the group.*") {
-                            Fail-Json $result "Failed to remove object $name - $errorMessage"
+                if ($group_obj.isMember($member.adspath)) {
+                    if (-not $check_mode) {
+                        try {
+                            $group_obj.Remove($path)
+                            
+                        } catch {
+                            #$errorMessage = $_.Exception.Message
+                            #if ($errorMessage -notlike "*The specified account name is not a member of the group.*") {
+                                Fail-Json $result "Failed to remove object $name - $($_.Exception.Message)"
+                            #}
                         }
                     }
+                    $result.changed = $true
                 }
             }
             else {
@@ -98,16 +101,18 @@ if ($null -ne $groups) {
         foreach ($grp in $groups) {
             $group_obj = Get-Group $grp
             if ($group_obj) {
-                if (-not $check_mode) {
-                    try {
-                        $group_obj.Add($path)
-                        $result.changed = $true
-                    } catch {
-                        $errorMessage = $_.Exception.Message
-                        if ($errorMessage -notlike "*The specified account name is already a member of the group.*") {
-                            Fail-Json $result "Failed to add object $name - $errorMessage"
+                if (-not $group_obj.isMember($member.adspath)) {
+                    if (-not $check_mode) {
+                        try {
+                            $group_obj.Add($path)
+                        } catch {
+                            #$errorMessage = $_.Exception.Message
+                            #if ($errorMessage -notlike "*The specified account name is already a member of the group.*") {
+                                Fail-Json $result "Failed to add object $name - $($_.Exception.Message)"
+                            #}
                         }
                     }
+                    $result.changed = $true
                 }
             }
             else {
