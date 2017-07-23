@@ -49,6 +49,7 @@ $result = @{
 #$name = "Liran"
 
 if ($domain) {
+    $domain = $domain.Split('.')[0]
     $path = "WinNT://$domain/$name"
 } else {
     $path = "WinNT://$env:COMPUTERNAME/$name"
