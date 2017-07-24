@@ -49,6 +49,8 @@ $result = @{
 #$name = "Liran"
 
 if ($domain) {
+    # TODO: Make sure this workaround works
+    $domain = $domain.Split('.')[0]
     $path = "WinNT://$domain/$name"
 } else {
     $path = "WinNT://$env:COMPUTERNAME/$name"
@@ -83,10 +85,7 @@ if ($null -ne $groups) {
                             $group_obj.Remove($path)
                             
                         } catch {
-                            #$errorMessage = $_.Exception.Message
-                            #if ($errorMessage -notlike "*The specified account name is not a member of the group.*") {
-                                Fail-Json $result "Failed to remove object $name - $($_.Exception.Message)"
-                            #}
+                            Fail-Json $result "Failed to remove object $name - $($_.Exception.Message)"
                         }
                     }
                     $result.changed = $true
@@ -104,12 +103,10 @@ if ($null -ne $groups) {
                 if (-not $group_obj.isMember($member.adspath)) {
                     if (-not $check_mode) {
                         try {
-                            $group_obj.Add($path)
+                            # TODO: fix local user add
+                            $group_obj.Add($adspath)
                         } catch {
-                            #$errorMessage = $_.Exception.Message
-                            #if ($errorMessage -notlike "*The specified account name is already a member of the group.*") {
-                                Fail-Json $result "Failed to add object $name - $($_.Exception.Message)"
-                            #}
+                            Fail-Json $result "Failed to add object $name - $($_.Exception.Message)"
                         }
                     }
                     $result.changed = $true
