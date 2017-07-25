@@ -82,7 +82,7 @@ if ($null -ne $groups) {
                 if ($group_obj.isMember($member.adspath)) {
                     if (-not $check_mode) {
                         try {
-                            $group_obj.Remove($path)
+                            $group_obj.Remove($member.adspath)
                             
                         } catch {
                             Fail-Json $result "Failed to remove object $name - $($_.Exception.Message)"
@@ -104,7 +104,7 @@ if ($null -ne $groups) {
                     if (-not $check_mode) {
                         try {
                             # TODO: fix local user add
-                            $group_obj.Add($adspath)
+                            $group_obj.Add($member.adspath)
                         } catch {
                             Fail-Json $result "Failed to add object $name - $($_.Exception.Message)"
                         }
