@@ -57,14 +57,13 @@ if ($domain) {
 }
 
 if ([ADSI]::Exists($path)) {
-    Fail-json 'hm'
-    $member = ([ADSI]$path)
+    $member = [ADSI]$path
 } else {
     Fail-Json $result "Object '$name' not found"
 }
 
 if ($member -eq $null) { 
-    Fail-Json 'Object can not be created' 
+#    Fail-Json 'Object $name can not be retrieved' 
 }
 
 If ($groups -is [System.String]) {

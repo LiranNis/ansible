@@ -28,9 +28,9 @@
  
     - name: Add domain user to local Remote Desktop Users group (changed)
       win_group_membership:
-        name: Liran
-        domain: AWESOME.DOMAIN
-        group: Remote Desktop Users
+        name: "Liran"
+        domain: "AWESOME.DOMAIN"
+        group: "Remote Desktop Users"
         state: present
 
     - name: Try to add the domain user to the group again (ok)
