@@ -50,7 +50,7 @@ $result = @{
 
 if ($domain) {
     # TODO: Make sure this workaround works
-    #$domain = $domain.Split('.')[0]
+    $domain = $domain.Split('.')[0]
     $path = "WinNT://$domain/$name"
 } else {
     $path = "WinNT://$env:COMPUTERNAME/$name"
@@ -61,6 +61,8 @@ if ([ADSI]::Exists($path)) {
 } else {
     Fail-Json $result "Object '$name' not found"
 }
+
+if ($member -eq $null) { Fail-Json '...' }
 
 If ($groups -is [System.String]) {
     [string[]]$groups = $groups.Split(",")
