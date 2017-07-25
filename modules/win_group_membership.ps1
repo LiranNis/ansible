@@ -98,7 +98,11 @@ if ($null -ne $groups) {
     }
     elseif ($state -eq "present") {
         foreach ($grp in $groups) {
-            $group_obj = Get-Group $grp
+            try {
+                $group_obj = Get-Group $grp
+            } catch {
+                Fail-Json $result "Failed to get group $grp - $errorMessage"
+            }
             if ($group_obj) {
                 if (-not $group_obj.isMember($member.adspath)) {
                     if (-not $check_mode) {
