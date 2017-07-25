@@ -50,7 +50,7 @@ $result = @{
 
 if ($domain) {
     # TODO: Make sure this workaround works
-    $domain = $domain.Split('.')[0]
+    #$domain = $domain.Split('.')[0]
     $path = "WinNT://$domain/$name"
 } else {
     $path = "WinNT://$env:COMPUTERNAME/$name"
