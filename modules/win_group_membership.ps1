@@ -110,7 +110,7 @@ if ($null -ne $groups) {
                             # TODO: fix local user add
                             $group_obj.Add($member.adspath)
                         } catch {
-                            Fail-Json $result "Failed to add object $($member.adspath) $name - $($_.Exception.Message)"
+                            Fail-Json $result "Failed to add object user:$name path:$path memberpath:$($member.path) adspath:$($member.adspath) $name - $($_.Exception.Message)"
                         }
                     }
                     $result.changed = $true
