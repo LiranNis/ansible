@@ -57,7 +57,7 @@ if ($domain) {
 }
 
 if ([ADSI]::Exists($path)) {
-    $member = [ADSI]$path
+    $member = [ADSI]"$path"
 } else {
     Fail-Json $result "Object '$name' not found"
 }
