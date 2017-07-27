@@ -63,7 +63,7 @@ if ($domain) {
 #}
 
 if (-not [ADSI]::Exists($path)) {
-    Fail-Json $result "Object '$name' not found"
+    Fail-Json $result "Object $name not found"
 }
 
 if ($member -eq $null) { 
