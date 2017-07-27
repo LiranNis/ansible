@@ -66,9 +66,9 @@ if (-not [ADSI]::Exists($path)) {
     Fail-Json $result "Object $name not found"
 }
 
-if ($member -eq $null) { 
-    Fail-Json 'Object $name can not be retrieved' 
-}
+#if ($member -eq $null) { 
+#    Fail-Json 'Object $name can not be retrieved' 
+#}
 
 If ($groups -is [System.String]) {
     [string[]]$groups = $groups.Split(",")
