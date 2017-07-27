@@ -56,14 +56,18 @@ if ($domain) {
     $path = "WinNT://$env:COMPUTERNAME/$name"
 }
 
-if ([ADSI]::Exists($path)) {
-    $member = [ADSI]"$path"
-} else {
+#if ([ADSI]::Exists($path)) {
+#    $member = [ADSI]"$path"
+#} else {
+#    Fail-Json $result "Object '$name' not found"
+#}
+
+if (-not [ADSI]::Exists($path)) {
     Fail-Json $result "Object '$name' not found"
 }
 
 if ($member -eq $null) { 
-#    Fail-Json 'Object $name can not be retrieved' 
+    Fail-Json 'Object $name can not be retrieved' 
 }
 
 If ($groups -is [System.String]) {
@@ -83,10 +87,10 @@ if ($null -ne $groups) {
                 Fail-Json $result "Failed to get group $grp - $errorMessage"
             }
             if ($group_obj) {
-                if ($group_obj.isMember($member.adspath)) {
+                if ($group_obj.isMember($path)) {
                     if (-not $check_mode) {
                         try {
-                            $group_obj.Remove($member.adspath)
+                            $group_obj.Remove($path)
                             
                         } catch {
                             Fail-Json $result "Failed to remove object $name - $($_.Exception.Message)"
@@ -108,11 +112,11 @@ if ($null -ne $groups) {
                 Fail-Json $result "Failed to get group $grp - $errorMessage"
             }
             if ($group_obj) {
-                if (-not $group_obj.isMember($member.adspath)) {
+                if (-not $group_obj.isMember($path)) {
                     if (-not $check_mode) {
                         try {
                             # TODO: fix local user add
-                            $group_obj.Add($member.adspath)
+                            $group_obj.Add($path)
                         } catch {
                             Fail-Json $result "Failed to add object user:$name path:$path memberpath:$($member.path) adspath:$($member.adspath) $name - $($_.Exception.Message)"
                         }
