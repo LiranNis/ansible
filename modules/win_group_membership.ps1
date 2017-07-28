@@ -27,6 +27,12 @@ Function Get-Group($group_name)
     $adsi.Children | where { $_.SchemaClassName -eq 'Group' -and $_.Name -eq $group_name }
 }
 
+Function Get-ComputerADsPath
+{
+    $adsi = [ADSI]"WinNT://$env:COMPUTERNAME"
+    $adsi.adspath
+}
+
 ########
 
 $params = Parse-Args $args -supports_check_mode $true
@@ -53,7 +59,7 @@ if ($domain) {
     $domain = $domain.Split('.')[0]
     $path = "WinNT://$domain/$name"
 } else {
-    $path = "WinNT://$env:COMPUTERNAME/$name"
+    $path = "$(Get-ComputerADsPath)/$name"
 }
 
 #if ([ADSI]::Exists($path)) {

@@ -1,6 +1,6 @@
 ---
 - name: test win_group_membership
-  hosts: windows2012
+  hosts: windows
   tasks:
     - name: Add local user user1 to Administrators group (changed)
       win_group_membership:
