@@ -47,34 +47,22 @@ $result = @{
     changed = $false
 }
 
-## Test vars:
-#$name = "AWESOME.DOMAIN/TestGroup"
-#$domain = "AWESOME.DOMAIN" # Domain User
-#$domain = $null # Local User
-#$groups = "Remote Desktop Users"
-#$name = "Liran"
-
 if ($domain) {
     # TODO: Make sure this workaround works
     $domain = $domain.Split('.')[0]
     $path = "WinNT://$domain/$name"
 } else {
-    $path = "$(Get-ComputerADsPath)/$name"
+    try {
+        $path = "$(Get-ComputerADsPath)/$name"
+    } catch {
+        Fail-Json $result "Can not retrieve computer adspath"
+    }
 }
-
-#if ([ADSI]::Exists($path)) {
-#    $member = [ADSI]"$path"
-#} else {
-#    Fail-Json $result "Object '$name' not found"
-#}
 
 if (-not [ADSI]::Exists($path)) {
     Fail-Json $result "Object $name not found"
 }
 
-#if ($member -eq $null) { 
-#    Fail-Json 'Object $name can not be retrieved' 
-#}
 
 If ($groups -is [System.String]) {
     [string[]]$groups = $groups.Split(",")
