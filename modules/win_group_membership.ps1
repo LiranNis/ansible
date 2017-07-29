@@ -109,7 +109,6 @@ if ($null -ne $groups) {
                 if (-not $group_obj.isMember($path)) {
                     if (-not $check_mode) {
                         try {
-                            # TODO: fix local user add
                             $group_obj.Add($path)
                         } catch {
                             Fail-Json $result "Failed to add object user:$name path:$path memberpath:$($member.path) adspath:$($member.adspath) $name - $($_.Exception.Message)"
