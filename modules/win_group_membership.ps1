@@ -55,26 +55,15 @@ $result = @{
 #$name = "Liran"
 
 if ($domain) {
-    # TODO: Make sure this workaround works
     $domain = $domain.Split('.')[0]
     $path = "WinNT://$domain/$name"
 } else {
     $path = "$(Get-ComputerADsPath)/$name"
 }
 
-#if ([ADSI]::Exists($path)) {
-#    $member = [ADSI]"$path"
-#} else {
-#    Fail-Json $result "Object '$name' not found"
-#}
-
 if (-not [ADSI]::Exists($path)) {
     Fail-Json $result "Object $name not found"
 }
-
-#if ($member -eq $null) { 
-#    Fail-Json 'Object $name can not be retrieved' 
-#}
 
 If ($groups -is [System.String]) {
     [string[]]$groups = $groups.Split(",")
@@ -121,10 +110,9 @@ if ($null -ne $groups) {
                 if (-not $group_obj.isMember($path)) {
                     if (-not $check_mode) {
                         try {
-                            # TODO: fix local user add
                             $group_obj.Add($path)
                         } catch {
-                            Fail-Json $result "Failed to add object user:$name path:$path memberpath:$($member.path) adspath:$($member.adspath) $name - $($_.Exception.Message)"
+                            Fail-Json $result "Failed to add member $name - $($_.Exception.Message)"
                         }
                     }
                     $result.changed = $true
