@@ -47,18 +47,15 @@ $result = @{
     changed = $false
 }
 
-## Test vars:
-#$name = "AWESOME.DOMAIN/TestGroup"
-#$domain = "AWESOME.DOMAIN" # Domain User
-#$domain = $null # Local User
-#$groups = "Remote Desktop Users"
-#$name = "Liran"
-
 if ($domain) {
     $domain = $domain.Split('.')[0]
     $path = "WinNT://$domain/$name"
 } else {
-    $path = "$(Get-ComputerADsPath)/$name"
+    try {
+        $path = "$(Get-ComputerADsPath)/$name"
+    } catch {
+        Fail-Json $result "Can not retrieve computer adspath"
+    }
 }
 
 if (-not [ADSI]::Exists($path)) {
