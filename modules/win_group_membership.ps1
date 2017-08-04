@@ -83,7 +83,6 @@ if ($null -ne $groups) {
                     if (-not $check_mode) {
                         try {
                             $group_obj.Remove($path)
-                            
                         } catch {
                             Fail-Json $result "Failed to remove object $name - $($_.Exception.Message)"
                         }
