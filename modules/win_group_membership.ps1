@@ -76,14 +76,13 @@ if ($null -ne $groups) {
             try {
                 $group_obj = Get-Group $grp
             } catch {
-                Fail-Json $result "Failed to get group $grp - $errorMessage"
+                Fail-Json $result "Failed to get group $grp - $($_.Exception.Message)"
             }
             if ($group_obj) {
                 if ($group_obj.isMember($path)) {
                     if (-not $check_mode) {
                         try {
                             $group_obj.Remove($path)
-                            
                         } catch {
                             Fail-Json $result "Failed to remove object $name - $($_.Exception.Message)"
                         }
@@ -101,7 +100,7 @@ if ($null -ne $groups) {
             try {
                 $group_obj = Get-Group $grp
             } catch {
-                Fail-Json $result "Failed to get group $grp - $errorMessage"
+                Fail-Json $result "Failed to get group $grp - $($_.Exception.Message)"
             }
             if ($group_obj) {
                 if (-not $group_obj.isMember($path)) {
