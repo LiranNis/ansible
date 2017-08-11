@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-# (c) 2017, Liran Nisanov <lirannis@chathamfinancial.com>
+# (c) 2017, Liran Nisanov <lirannis@gmail.com>
 #
 # This file is part of Ansible
 #
