@@ -1,6 +1,5 @@
 $win32_vol = Get-CimInstance Win32_Volume
 
-
 $volumes = @()
 foreach ($volume in $win32_vol)
 {
@@ -16,4 +15,4 @@ foreach ($volume in $win32_vol)
    $thisvol = $null
 }
 
-Set-Attr $result.ansible_facts "ansible_volumes" $volumesd
+ansible_volumes $volumes
