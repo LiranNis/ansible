@@ -1,14 +1,7 @@
- $result.pagefiles = @()
+$win32_pfs = Get-WmiObject Win32_PageFileSetting
+$pagefiles = @()
 
-try {
-        $pagefiles = Get-Pagefile $fullPath
-} catch {
-        Fail-Json $result "Failed to query specific pagefile $($_.Exception.Message)"
-}
-
-
-# Get all pagefiles
-foreach ($currentPagefile in $pagefiles) {
+foreach ($currentPagefile in $win32_pfs) {
     $currentPagefileObject = @{
         name = $currentPagefile.Name
         initial_size = $currentPagefile.InitialSize
@@ -16,5 +9,8 @@ foreach ($currentPagefile in $pagefiles) {
         caption = $currentPagefile.Caption
         description = $currentPagefile.Description
     }
-    $result.pagefiles += $currentPagefileObject
+    $pagefiles += $currentPagefileObject
 }
+
+# Add to ansible facts
+ansible_pagefiles = $pagefiles
