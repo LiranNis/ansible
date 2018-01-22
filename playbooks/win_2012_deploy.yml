@@ -2,6 +2,12 @@
 
 - name: Windows 2012 deploy playbook
   hosts: all
+  gather_facts: no
+  pre_tasks:
+  - name: Wait for connection
+    wait_for_connection:
+  - name: Setup
+    setup:
   roles:
   - win_foreman_built
   vars_files:
