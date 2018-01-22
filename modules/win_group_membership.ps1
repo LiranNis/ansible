@@ -1,3 +1,4 @@
+# This is not ansible win_group_membership original module! It is another implementation that was written before the merge.
 #!powershell
 # This file is part of Ansible
 #
